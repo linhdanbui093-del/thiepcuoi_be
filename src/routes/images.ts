@@ -38,7 +38,15 @@ const upload = multer({
 });
 
 // Upload image
-router.post('/upload', upload.single('image'), async (req, res) => {
+const uploadMiddleware = upload.single('image');
+router.post('/upload', (req: any, res: any, next: any) => {
+  uploadMiddleware(req, res, (err: any) => {
+    if (err) {
+      return res.status(400).json({ error: err.message });
+    }
+    next();
+  });
+}, async (req: any, res: express.Response) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
