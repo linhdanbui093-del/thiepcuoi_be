@@ -52,7 +52,7 @@ router.post('/upload', (req: any, res: any, next: any) => {
     }
 
     // Return the path that can be used as musicUrl
-    const fileUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+    const fileUrl = `https://${req.get('host')}/uploads/${req.file.filename}`;
     
     res.status(201).json({
       filename: req.file.filename,
