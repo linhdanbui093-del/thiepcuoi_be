@@ -43,9 +43,6 @@ async function optimizeImages() {
 
       try {
         console.log(`🔄 Optimizing ${image.filename}...`);
-
-        // Get image metadata
-        const metadata = await sharp(filePath).metadata();
         
         // Determine max dimensions based on category
         let maxWidth = 1920;
@@ -66,8 +63,9 @@ async function optimizeImages() {
         const originalSize = fs.statSync(filePath).size;
 
         // Resize and optimize image (auto-rotate based on EXIF)
+        // .rotate() without parameters auto-rotates based on EXIF orientation tag
         const optimizedBuffer = await sharp(filePath)
-          .rotate() // Auto-rotate based on EXIF orientation
+          .rotate() // Auto-rotate based on EXIF orientation (removes orientation from metadata)
           .resize(maxWidth, maxHeight, {
             fit: 'inside',
             withoutEnlargement: true

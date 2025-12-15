@@ -81,9 +81,6 @@ router.post('/upload', (req: any, res: any, next: any) => {
     const optimizedPath = path.join(uploadDir, optimizedFilename);
 
     try {
-      // Get image metadata
-      const metadata = await sharp(originalPath).metadata();
-      
       // Determine max dimensions based on category
       let maxWidth = 1920; // Default max width
       let maxHeight = 1920; // Default max height
@@ -100,15 +97,23 @@ router.post('/upload', (req: any, res: any, next: any) => {
       }
       // album uses default 1920x1920
 
-        // Resize and optimize image (auto-rotate based on EXIF)
-        const optimizedBuffer = await sharp(originalPath)
-          .rotate() // Auto-rotate based on EXIF orientation
-          .resize(maxWidth, maxHeight, {
-            fit: 'inside',
-            withoutEnlargement: true
-          })
-          .webp({ quality: 85, effort: 4 })
-          .toBuffer();
+      // Resize and optimize image (auto-rotate based on EXIF)
+      // Use sharp with auto orientation handling
+      let imageProcessor = sharp(originalPath);
+      
+      // Get metadata to check orientation
+      const metadata = await imageProcessor.metadata();
+      console.log('Image metadata:', { width: metadata.width, height: metadata.height, orientation: metadata.orientation });
+      
+      // .rotate() without parameters automatically applies EXIF orientation
+      const optimizedBuffer = await imageProcessor
+        .rotate() // Auto-rotate based on EXIF orientation (removes orientation tag)
+        .resize(maxWidth, maxHeight, {
+          fit: 'inside',
+          withoutEnlargement: true
+        })
+        .webp({ quality: 85, effort: 4 })
+        .toBuffer();
 
       // Write optimized image
       fs.writeFileSync(optimizedPath, optimizedBuffer);
@@ -260,8 +265,9 @@ router.post('/:id/optimize', async (req, res) => {
     }
 
         // Resize and optimize image (auto-rotate based on EXIF)
+        // .rotate() without parameters auto-rotates based on EXIF orientation tag
         const optimizedBuffer = await sharp(filePath)
-          .rotate() // Auto-rotate based on EXIF orientation
+          .rotate() // Auto-rotate based on EXIF orientation (removes orientation from metadata)
           .resize(maxWidth, maxHeight, {
             fit: 'inside',
             withoutEnlargement: true
