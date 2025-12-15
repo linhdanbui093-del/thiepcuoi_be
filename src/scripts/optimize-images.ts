@@ -65,8 +65,9 @@ async function optimizeImages() {
         // Get original file size
         const originalSize = fs.statSync(filePath).size;
 
-        // Resize and optimize image
+        // Resize and optimize image (auto-rotate based on EXIF)
         const optimizedBuffer = await sharp(filePath)
+          .rotate() // Auto-rotate based on EXIF orientation
           .resize(maxWidth, maxHeight, {
             fit: 'inside',
             withoutEnlargement: true
