@@ -9,6 +9,7 @@ import imageRoutes from './routes/images';
 import wishRoutes from './routes/wishes';
 import rsvpRoutes from './routes/rsvp';
 import adminRoutes from './routes/admin';
+import musicRoutes from './routes/music';
 
 dotenv.config();
 
@@ -39,6 +40,7 @@ app.use('/api/images', imageRoutes);
 app.use('/api/wishes', wishRoutes);
 app.use('/api/rsvp', rsvpRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/music', musicRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

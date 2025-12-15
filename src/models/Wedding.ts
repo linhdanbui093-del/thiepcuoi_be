@@ -22,6 +22,7 @@ export interface IWedding extends Document {
     date: string;
     location: string;
     address: string;
+    mapLink?: string;
   }[];
   parents: {
     groom: {
@@ -46,6 +47,8 @@ export interface IWedding extends Document {
       accountNumber: string;
     };
   };
+  musicUrl?: string;
+  musicEnabled?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -76,7 +79,8 @@ const WeddingSchema: Schema = new Schema(
         time: String,
         date: String,
         location: String,
-        address: String
+        address: String,
+        mapLink: String
       }],
       default: []
     },
@@ -102,7 +106,9 @@ const WeddingSchema: Schema = new Schema(
         name: String,
         accountNumber: String
       }
-    }
+    },
+    musicUrl: { type: String, default: '' },
+    musicEnabled: { type: Boolean, default: true }
   },
   { timestamps: true }
 );
